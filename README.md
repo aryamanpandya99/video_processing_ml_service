@@ -1,4 +1,4 @@
-# Production Deep Learning Systems 
+# Production Deep Learning 
 
 This project will implement a simple deep learning system tasked with classifying frames from a video. The video will be uploaded to a server, which will then run a classification model and store the results in a database. 
 
