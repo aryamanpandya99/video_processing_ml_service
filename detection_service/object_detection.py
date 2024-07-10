@@ -1,3 +1,4 @@
+import argparse
 import io
 import json
 
@@ -32,14 +33,19 @@ def object_detection(model, frames: list) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def main():
+def main(frames: list):
     model = YOLO("yolov9c")
     if torch.cuda.is_available():
         model = model.to("cuda")
-    frames = ["frame1.jpg", "frame2.jpg"]
+    
     predictions = object_detection(model, frames)
     print(predictions)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p','--paths', nargs='+', help='List of s3 paths', required=True)
+    args = parser.parse_args()
+
+    frames = frames_from_s3_paths(args.paths)
+    main(frames)
