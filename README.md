@@ -6,5 +6,5 @@ The goal of this project is to get familiarized with tools and infrastructure fr
 
 ## System Design 
 
-![System Architecture Diagram](images/sys_design.png)
+![System Architecture Diagram](sys_design.png)
 
