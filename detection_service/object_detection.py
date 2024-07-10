@@ -1,3 +1,10 @@
+"""
+Object detection application. 
+In: s3 image paths 
+Out: detection values written to MongoDB
+
+Author: Aryaman Pandya
+"""
 import argparse
 import io
 import json
@@ -11,7 +18,16 @@ from ultralytics import YOLO
 
 def frames_from_s3_paths(
     s3_paths: list,
-) -> list:
+) -> torch.Tensor:
+    """
+    Given paths to images in s3, returns a torch tensor of
+    these image frames stacked.
+
+    Args:
+        s3_paths (list[str])
+    Returns:
+        stacked_frames (torch.Tensor)
+    """
     s3 = boto3.client("s3")
     stacked_frames = None
 
@@ -29,15 +45,29 @@ def frames_from_s3_paths(
     return stacked_frames
 
 
-def object_detection(model, frames: list) -> list:
+def object_detection(model, frames: torch.Tensor) -> list:
+    """
+    Runs the detection model on each frame and returns a list of result jsons
+
+    Args:
+        model: torch.nn.Module
+        frames: torch.Tensor
+    
+    Returns:
+        results: list[json]
+    """
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def main(frames: list):
+def main(frame_paths: list):
+    """
+    Runs the pipeline end to end: s3 paths -> write to db
+    """
+    frames = frames_from_s3_paths(frame_paths)
     model = YOLO("yolov9c")
     if torch.cuda.is_available():
         model = model.to("cuda")
-    
+
     predictions = object_detection(model, frames)
     print(predictions)
 
@@ -47,5 +77,4 @@ if __name__ == "__main__":
     parser.add_argument('-p','--paths', nargs='+', help='List of s3 paths', required=True)
     args = parser.parse_args()
 
-    frames = frames_from_s3_paths(args.paths)
-    main(frames)
+    main(args.paths)

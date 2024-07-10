@@ -1,10 +1,16 @@
+"""
+This module implements the lambda function triggered by successful image uploads
+in s3
+"""
 import json
 
 
 def handler(event, context):
-    # Log the event to CloudWatch
+    """
+    Lambda trigger (s3 upload) handler
+    """
     print("Received event: " + json.dumps(event, indent=2))
-
+    print(f"Context: {context}")
     try:
         for record in event["Records"]:
             s3 = record["s3"]
