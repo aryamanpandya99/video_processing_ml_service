@@ -1,14 +1,11 @@
-FROM python:3.10
+# Use the Amazon Linux 2 base image
+FROM public.ecr.aws/lambda/python:3.10
 
-WORKDIR /app
+# Copy the function code
+COPY . ${LAMBDA_TASK_ROOT}
 
-# COPY requirements.txt /app/
-
-RUN apt-get update && \
-    apt-get install -y 
-
-# RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . /app
-
-CMD ["lambda_function.lambda_handler"]
+# COPY requirements.txt ./
+# RUN pip install -r requirements.txt
+EXPOSE 8080
+# Command to run the Lambda function handler
+CMD ["main.handler"]
