@@ -1,12 +1,11 @@
-import json
-from ultralytics import YOLO
-from PIL import Image
-import cv2
-import numpy as np
 import io
-import torch
+import json
+
 import boto3
+import torch
 import torchvision.transforms.functional as F
+from PIL import Image
+from ultralytics import YOLO
 
 
 def frames_from_s3_paths(
