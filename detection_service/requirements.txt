@@ -1,0 +1,5 @@
+pymongo
+torch
+torchvision
+ultralytics
+boto3
