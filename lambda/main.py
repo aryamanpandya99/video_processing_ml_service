@@ -2,6 +2,7 @@
 This module implements the lambda function triggered by successful image uploads
 in s3
 """
+
 import json
 
 

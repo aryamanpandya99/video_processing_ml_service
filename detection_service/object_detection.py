@@ -5,6 +5,7 @@ Out: detection values written to MongoDB
 
 Author: Aryaman Pandya
 """
+
 import argparse
 import io
 import json
@@ -15,10 +16,7 @@ from PIL import Image
 from ultralytics import YOLO
 
 
-def frames_from_paths(
-    paths: list,
-    is_aws: bool
-) -> list:
+def frames_from_paths(paths: list, is_aws: bool) -> list:
     """
     Given paths to images in s3, returns a torch tensor of
     these image frames stacked.
@@ -37,10 +35,10 @@ def frames_from_paths(
             response = aws_client.get_object(Bucket="video-aws-bucket", Key=path)
             image_bytes = response["Body"].read()
             image = Image.open(io.BytesIO(image_bytes))
-        else: 
+        else:
             image = Image.open(path)
-        
-        frames.append(image) # YOLO takes care of the tensore conversion
+
+        frames.append(image)  # YOLO takes care of the tensore conversion
 
     return frames
 
@@ -74,9 +72,11 @@ def main(frame_paths: list, is_aws: bool):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p','--paths', nargs='+', help='List of s3 paths', required=True)
-    parser.add_argument('--aws', action='store_true')
-    
+    parser.add_argument(
+        "-p", "--paths", nargs="+", help="List of s3 paths", required=True
+    )
+    parser.add_argument("--aws", action="store_true")
+
     args = parser.parse_args()
 
     main(args.paths, args.aws)
