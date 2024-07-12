@@ -20,7 +20,7 @@ def handler(event, context):
 
             print(f"Bucket: {bucket}")
             print(f"Key: {key}")
-    except Exception as exc:
+    except Exception as exc: # pylint: disable=broad-except
         print(f"An error occurred: {exc}")
         return {"statusCode": 500, "body": json.dumps("An error occurred")}
 
