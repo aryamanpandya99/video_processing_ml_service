@@ -49,3 +49,7 @@ def process():
         return result
 
     return jsonify({"error": "Unknown"}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
