@@ -60,7 +60,8 @@ def run_detection(frame_paths: list, is_aws: bool):
     """
     Runs the pipeline end to end: s3 paths -> write to db
     """
-    frames = frames_from_paths(frame_paths, is_aws)
+    print(frame_paths)
+    frames = frames_from_paths([frame_paths], is_aws)
     model = YOLO(model="models/yolov9c.pt")
     if torch.cuda.is_available():
         model = model.to("cuda")
