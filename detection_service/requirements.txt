@@ -4,3 +4,4 @@ torchvision==0.17.2
 ultralytics==8.2.51
 boto3==1.34.141
 pillow==10.4.0
+flask==3.0.3
