@@ -5,7 +5,7 @@ Author: Aryaman Pandya
 """
 
 from flask import Flask, jsonify, request
-from object_detection import run_detection
+from object_detection_web_service.detection_service.detection_core import run_detection
 
 app = Flask(__name__)
 
