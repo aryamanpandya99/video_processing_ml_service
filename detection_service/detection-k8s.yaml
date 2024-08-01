@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: detection-app-deployment
+  labels:
+    app: detection-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: detection-app 
+  template: 
+    metadata:
+      labels:
+        app: detection-app 
+    spec:
+      containers:
+        - name: detection-app
+          image: detection_service # change name in the future to avoid confusion around "service"
+          ports:
+            - containerPort: 5000
+
+---
+# above hyphens denote a separator that separates the yaml file into multiple documents
+# each document is a separate kubernetes object
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: detection-app-service
+  labels:
+    app: detection-app
+spec:
+  ports:
+    - port: 5000 # external port 
+      targetPort: 5000 # internal port
+  selector:
+    app: detection-app # connects us to our pod from above 
+              
