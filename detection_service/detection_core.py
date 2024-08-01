@@ -8,6 +8,7 @@ Author: Aryaman Pandya
 
 import io
 import json
+from typing import Callable, List
 
 import boto3
 import torch
@@ -15,31 +16,37 @@ from PIL import Image
 from ultralytics import YOLO
 
 
-def frames_from_paths(paths: list, is_aws: bool) -> list:
+def get_local_image(path: str) -> Image.Image:
     """
-    Given paths to images in s3, returns a torch tensor of
-    these image frames stacked.
+    Fetch an image from a local path
+    """
+    return Image.open(path)
 
-    Args:
-        paths (list[str])
-        is_aws (bool): whether paths are s3 paths or local
 
-    Returns:
-        frames (list[PIL.Image])
+def get_aws_image(path: str, bucket: str) -> Image.Image:
+    """
+    Fetch an image from AWS S3
     """
     aws_client = boto3.client("s3")
-    frames = []
-    for path in paths:
-        if is_aws:
-            response = aws_client.get_object(Bucket="video-aws-bucket", Key=path)
-            image_bytes = response["Body"].read()
-            image = Image.open(io.BytesIO(image_bytes))
-        else:
-            image = Image.open(path)
+    response = aws_client.get_object(Bucket=bucket, Key=path)
+    image_bytes = response["Body"].read()
+    return Image.open(io.BytesIO(image_bytes))
 
-        frames.append(image)  # YOLO takes care of the tensore conversion
 
-    return frames
+def frames_from_paths(
+    paths: List[str], image_getter: Callable[[str], Image.Image]
+) -> List[Image.Image]:
+    """
+    Given paths to images, returns a list of PIL Image objects.
+
+    Args:
+        paths (List[str]): List of image paths.
+        image_getter (Callable[[str], Image.Image]): Function to get an image from a path.
+
+    Returns:
+        List[Image.Image]: List of PIL Image objects.
+    """
+    return [image_getter(path) for path in paths]
 
 
 def object_detection(model, frames: torch.Tensor) -> list:
@@ -56,16 +63,17 @@ def object_detection(model, frames: torch.Tensor) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def run_detection(frame_paths: list, is_aws: bool):
+def run_detection(paths: List[str], is_aws: bool):
     """
-    Runs the pipeline end to end: s3 paths -> write to db
+    Driver function that runs detection end to end given a list of paths.
     """
-    print(frame_paths)
-    frames = frames_from_paths([frame_paths], is_aws)
+    image_getter = get_aws_image if is_aws else get_local_image
+    frames = frames_from_paths(paths, image_getter)
+
     model = YOLO(model="models/yolov9c.pt")
     if torch.cuda.is_available():
         model = model.to("cuda")
 
     predictions = object_detection(model, frames)
-    print(predictions)
+
     return predictions
