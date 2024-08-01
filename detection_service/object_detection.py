@@ -6,7 +6,6 @@ Out: detection values written to MongoDB
 Author: Aryaman Pandya
 """
 
-import argparse
 import io
 import json
 
@@ -57,7 +56,7 @@ def object_detection(model, frames: torch.Tensor) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def main(frame_paths: list, is_aws: bool):
+def run_detection(frame_paths: list, is_aws: bool):
     """
     Runs the pipeline end to end: s3 paths -> write to db
     """
@@ -68,15 +67,4 @@ def main(frame_paths: list, is_aws: bool):
 
     predictions = object_detection(model, frames)
     print(predictions)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-p", "--paths", nargs="+", help="List of s3 paths", required=True
-    )
-    parser.add_argument("--aws", action="store_true")
-
-    args = parser.parse_args()
-
-    main(args.paths, args.aws)
+    return predictions
