@@ -9,23 +9,25 @@ import os
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
-from object_detection_web_service.detection_service.detection_core import run_detection
+from video_processing_ml_service.object_detection_service.detection_core import (
+    detections_from_img_paths,
+)
 
 app = Flask(__name__)
 
 
 @app.route("/process", methods=["POST"])
-def process():
+def handle_object_detection_request():
     """
     Process the uploaded frame for object detection.
 
     This endpoint expects a POST request with frame paths in the 'frame' field.
     It runs object detection on the provided frame and returns the results.
 
+    Args:
+        None
     Returns:
         JSON response with detection results or error message.
-        200 - Successful detection
-        400 - Bad request (missing frame or empty frame name)
     """
     if "frame" not in request.files:
         return jsonify({"error": "No frame file"}), 400
@@ -35,17 +37,17 @@ def process():
         return jsonify({"error": "No selected frame"}), 400
 
     if frame:
-        # Save the file temporarily
+        # Save the file temporarily, process, then evict
         filename = secure_filename(frame.filename)
         temp_path = os.path.join("/tmp", filename)
         frame.save(temp_path)
-
-        # Run detection on the saved file
-        result = run_detection(temp_path, False)
-
-        # Remove the temporary file
+        result = detections_from_img_paths(temp_path, False)
         os.remove(temp_path)
 
         return result
 
     return jsonify({"error": "Unknown"}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
