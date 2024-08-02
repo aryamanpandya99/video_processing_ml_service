@@ -15,17 +15,17 @@ app = Flask(__name__)
 
 
 @app.route("/process", methods=["POST"])
-def process():
+def handle_object_detection_request():
     """
     Process the uploaded frame for object detection.
 
     This endpoint expects a POST request with frame paths in the 'frame' field.
     It runs object detection on the provided frame and returns the results.
 
+    Args:
+        None
     Returns:
         JSON response with detection results or error message.
-        200 - Successful detection
-        400 - Bad request (missing frame or empty frame name)
     """
     if "frame" not in request.files:
         return jsonify({"error": "No frame file"}), 400
@@ -35,15 +35,11 @@ def process():
         return jsonify({"error": "No selected frame"}), 400
 
     if frame:
-        # Save the file temporarily
+        # Save the file temporarily, process, then evict
         filename = secure_filename(frame.filename)
         temp_path = os.path.join("/tmp", filename)
         frame.save(temp_path)
-
-        # Run detection on the saved file
         result = run_detection(temp_path, False)
-
-        # Remove the temporary file
         os.remove(temp_path)
 
         return result
