@@ -49,7 +49,7 @@ def frames_from_paths(
     return [image_getter(path) for path in paths]
 
 
-def object_detection(model, frames: torch.Tensor) -> list:
+def predict_objects_in_frame(model, frames: torch.Tensor) -> list:
     """
     Runs the detection model on each frame and returns a list of result jsons
 
@@ -63,9 +63,15 @@ def object_detection(model, frames: torch.Tensor) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def run_detection(paths: List[str], is_aws: bool):
+def detections_from_img_paths(paths: List[str], is_aws: bool) -> list:
     """
     Driver function that runs detection end to end given a list of paths.
+    Args:
+        paths (List[str]): List of image paths.
+        is_aws (bool): Flag indicating if the images are stored in AWS S3.
+
+    Returns:
+        predictions (list): List of predictions in JSON format.
     """
     image_getter = get_aws_image if is_aws else get_local_image
     frames = frames_from_paths(paths, image_getter)
@@ -74,6 +80,6 @@ def run_detection(paths: List[str], is_aws: bool):
     if torch.cuda.is_available():
         model = model.to("cuda")
 
-    predictions = object_detection(model, frames)
+    predictions = predict_objects_in_frame(model, frames)
 
     return predictions
