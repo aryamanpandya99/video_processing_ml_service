@@ -63,7 +63,7 @@ def predict_objects_in_frame(model, frames: torch.Tensor) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def detections_from_img_paths(paths: List[str], is_aws: bool) -> list:
+def detections_from_img_paths(paths: List[str], is_aws: bool, model_path: str = "models/yolov9c.pt") -> list:
     """
     Driver function that runs detection end to end given a list of paths.
     Args:
@@ -76,7 +76,7 @@ def detections_from_img_paths(paths: List[str], is_aws: bool) -> list:
     image_getter = get_aws_image if is_aws else get_local_image
     frames = frames_from_paths(paths, image_getter)
 
-    model = YOLO(model="models/yolov9c.pt")
+    model = YOLO(model=model_path)
     if torch.cuda.is_available():
         model = model.to("cuda")
 
