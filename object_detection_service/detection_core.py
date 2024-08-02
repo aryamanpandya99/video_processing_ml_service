@@ -63,7 +63,9 @@ def predict_objects_in_frame(model, frames: torch.Tensor) -> list:
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
 
 
-def detections_from_img_paths(paths: List[str], is_aws: bool, model_path: str = "models/yolov9c.pt") -> list:
+def detections_from_img_paths(
+    paths: List[str], is_aws: bool, model_path: str = "models/yolov9c.pt"
+) -> list:
     """
     Driver function that runs detection end to end given a list of paths.
     Args:
