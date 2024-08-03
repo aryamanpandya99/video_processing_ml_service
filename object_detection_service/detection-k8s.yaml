@@ -15,14 +15,13 @@ spec:
         app: detection-app 
     spec:
       containers:
-        - name: detection-app
-          image: detection_service # change name in the future to avoid confusion around "service"
+        - name: detection-container
+          image: detection_container
+          imagePullPolicy: Never
           ports:
             - containerPort: 5000
 
 ---
-# above hyphens denote a separator that separates the yaml file into multiple documents
-# each document is a separate kubernetes object
 
 apiVersion: v1
 kind: Service
