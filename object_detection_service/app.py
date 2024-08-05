@@ -46,7 +46,6 @@ def handle_object_detection_request():
 
         return result
 
-
     return jsonify({"error": "Unknown"}), 500
 
 
