@@ -15,6 +15,7 @@ import torch
 from PIL import Image
 from ultralytics import YOLO
 
+
 def detections_from_img_paths(
     paths: List[str], is_aws: bool, model_path: str = "models/yolov9c.pt"
 ) -> list:
@@ -37,6 +38,7 @@ def detections_from_img_paths(
     predictions = predict_objects_in_frame(model, frames)
 
     return predictions
+
 
 def get_local_image(path: str) -> Image.Image:
     """
@@ -83,6 +85,3 @@ def predict_objects_in_frame(model, frames: torch.Tensor) -> list:
         results: list[json]
     """
     return [json.loads(pred.tojson()) for pred in model.predict(frames, stream=True)]
-
-
-

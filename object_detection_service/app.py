@@ -31,7 +31,6 @@ def handle_object_detection_request():
         return jsonify({"error": "No frame file"}), 400
 
     frame = request.files["frame"]
-    print(frame)
     if frame.filename == "":
         return jsonify({"error": "No selected frame"}), 400
 
@@ -40,7 +39,6 @@ def handle_object_detection_request():
         filename = secure_filename(frame.filename)
         temp_path = os.path.join("/tmp", filename)
         frame.save(temp_path)
-        print(f"temp path: {temp_path}")
         result = detections_from_img_paths([temp_path], False)
         os.remove(temp_path)
 
