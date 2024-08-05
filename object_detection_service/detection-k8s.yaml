@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: detection-container
-          image: detection_container
+          image: detection_container:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5000
@@ -30,8 +30,9 @@ metadata:
   labels:
     app: detection-app
 spec:
+  type: LoadBalancer
   ports:
-    - port: 5000 # external port 
+    - port: 80 # external port 
       targetPort: 5000 # internal port
   selector:
     app: detection-app # connects us to our pod from above 
