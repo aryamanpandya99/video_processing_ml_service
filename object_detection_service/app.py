@@ -9,9 +9,7 @@ import os
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
-from video_processing_ml_service.object_detection_service.detection_core import (
-    detections_from_img_paths,
-)
+from .detection_core import detections_from_img_paths
 
 app = Flask(__name__)
 
