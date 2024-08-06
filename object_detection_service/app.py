@@ -9,9 +9,7 @@ import os
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
-from video_processing_ml_service.object_detection_service.detection_core import (
-    detections_from_img_paths,
-)
+from .detection_core import detections_from_img_paths
 
 app = Flask(__name__)
 
@@ -41,7 +39,7 @@ def handle_object_detection_request():
         filename = secure_filename(frame.filename)
         temp_path = os.path.join("/tmp", filename)
         frame.save(temp_path)
-        result = detections_from_img_paths(temp_path, False)
+        result = detections_from_img_paths([temp_path], False)
         os.remove(temp_path)
 
         return result
