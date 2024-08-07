@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: detection-container
-          image: detection_container:latest
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5000

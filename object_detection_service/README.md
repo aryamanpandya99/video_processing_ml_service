@@ -85,3 +85,9 @@ docker tag object-detection:latest ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws
 ```bash
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
 ```
+
+Create secrets for ECR credentials:
+
+```bash
+kubectl create secret docker-registry regcred --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com --docker-username=AWS --docker-password=${AWS_ECR_PWD} --docker-email=aryamanpandya@gmail.com
+```
