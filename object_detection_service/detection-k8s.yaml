@@ -16,10 +16,16 @@ spec:
     spec:
       containers:
         - name: detection-container
-          image: detection_container:latest
+          image: ${ECR_REGISTRY}/object-detection:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5000
+          env:
+          - name: ECR_REGISTRY
+            valueFrom:
+              secretKeyRef:
+                name: ecr-registry
+                key: registry
 
 ---
 

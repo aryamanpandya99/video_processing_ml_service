@@ -71,7 +71,7 @@ Now the object detection service is up and running within your minikube cluster.
 ## Deployment to AWS EKS
 
 ```bash
-aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-2.amazonaws.com
+aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com
 ```
 
 ```bash
@@ -79,9 +79,15 @@ docker build -t object-detection .
 ```
 
 ```bash
-docker tag object-detection:latest <account-id>.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
+docker tag object-detection:latest ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
 ```
 
 ```bash
-docker push <account-id>.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
+docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
+```
+
+Create secrets for ECR credentials:
+
+```bash
+kubectl create secret docker-registry regcred --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com --docker-username=AWS --docker-password=${AWS_ECR_PWD} --docker-email=aryamanpandya@gmail.com
 ```
