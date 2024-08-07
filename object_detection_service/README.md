@@ -68,3 +68,20 @@ To build and run the object detection service, follow these steps:
 Now the object detection service is up and running within your minikube cluster. You can send a POST request to `http://video-processing.com/process` with the frame to be processed. The frame should be included as a file in the `frame` field of the request. The service will process the frame and return the detection results in JSON format.
 
 
+## Deployment to AWS EKS
+
+```bash
+aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-2.amazonaws.com
+```
+
+```bash
+docker build -t object-detection .
+```
+
+```bash
+docker tag object-detection:latest <account-id>.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
+```
+
+```bash
+docker push <account-id>.dkr.ecr.us-east-2.amazonaws.com/object-detection:latest
+```
